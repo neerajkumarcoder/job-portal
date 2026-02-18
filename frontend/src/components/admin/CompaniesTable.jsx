@@ -1,0 +1,100 @@
+import React from "react";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
+import { Avatar, AvatarImage } from "../ui/avatar";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Edit2, MoreHorizontal } from "lucide-react";
+import { useSelector } from "react-redux";
+import { useState } from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+function CompaniesTable() {
+  const navigate = useNavigate();
+  
+  // ✅ SAFE selector (kabhi undefined nahi hoga)
+  const companies = useSelector((store) => store.company.companies) || [];
+
+  const searchCompanyByText = useSelector((store) => store.company.searchCompanyByText);
+  const [filterCompany, setFilterCompany] = useState(companies);
+  useEffect(() => {
+    const filteredCompany =
+      companies.length >= 0 &&
+      companies.filter((company) => {
+        if (!searchCompanyByText) {
+          return true;
+        }
+        return company?.name
+          ?.toLowerCase()
+          .includes(searchCompanyByText.toLowerCase());
+      });
+      setFilterCompany(filteredCompany);
+  }, [companies, searchCompanyByText]);
+
+  return (
+    <div>
+      <Table>
+        <TableCaption>A list of your recent registered companies</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Logo</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Date</TableHead>
+            <TableHead className="text-right">Action</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {companies.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={4} className="text-center">
+                You haven't registered any company yet.
+              </TableCell>
+            </TableRow>
+          ) : (
+            filterCompany.map((company) => (
+              <TableRow key={company._id}>
+                <TableCell>
+                  <Avatar>
+                    <AvatarImage
+                      src={
+                        company.logo ||
+                        "https://img.freepik.com/premium-vector/creative-elegant-abstract-minimalistic-logo-design-vector-any-brand-company_1287271-18452.jpg?semt=ais_hybrid&w=740&q=80"
+                      }
+                      alt={company.name}
+                    />
+                  </Avatar>
+                </TableCell>
+                <TableCell>{company.name}</TableCell>
+                <TableCell>
+                  {company.createdAt ? company.createdAt.split("T")[0] : "-"}
+                </TableCell>
+                <TableCell className="text-right cursor-pointer">
+                  <Popover>
+                    <PopoverTrigger>
+                      <MoreHorizontal />
+                    </PopoverTrigger>
+                    <PopoverContent className="w-32">
+                      <div onClick={()=>navigate(`/admin/companies/${company._id}`)} className="flex items-center gap-2 w-fit cursor-pointer">
+                        <Edit2 className="w-4" />
+                        <span>Edit</span>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
+
+export default CompaniesTable;

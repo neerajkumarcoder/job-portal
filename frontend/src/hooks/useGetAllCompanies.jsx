@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import axios from "axios";
-import { COMPANY_API_END_POINT } from "../utils/constent";
+// import axios from "axios";
+// import { COMPANY_API_END_POINT } from "../utils/constent";
+import API from "../utils/axios";
 import { setCompanies } from "../redux/companySlice";
 
 function useGetAllCompanies() {
@@ -13,14 +14,15 @@ function useGetAllCompanies() {
         // 1. LocalStorage se token nikaalein
         const token = localStorage.getItem("token");
 
-        const res = await axios.get(`${COMPANY_API_END_POINT}/get`, {
-          headers: {
-            // 2. Token ko Authorization header mein bhejein
-            // Iske bina Render (Backend) request reject kar dega
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true,
-        });
+        // const res = await axios.get(`${COMPANY_API_END_POINT}/get`, {
+        //   headers: {
+        //     // 2. Token ko Authorization header mein bhejein
+        //     // Iske bina Render (Backend) request reject kar dega
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        //   withCredentials: true,
+        // });
+        const res = await API.get("/company/get");
 
         if (res.data.success) {
           dispatch(setCompanies(res.data.companies));

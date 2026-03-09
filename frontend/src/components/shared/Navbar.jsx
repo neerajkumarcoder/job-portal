@@ -12,7 +12,6 @@ import { setUser } from "../../redux/authSlice";
 
 function Navbar() {
   const { user } = useSelector((store) => store.auth);
-  console.log("USER DATA:", user);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -27,11 +26,9 @@ function Navbar() {
         toast.success(res.data.message);
       }
     } catch (error) {
-      console.log(error);
       toast.error(error.response.data.message);
     }
   };
-  console.log("PROFILE PHOTO:", user?.profile?.profilePhoto);
 
   return (
     <div className="bg-white">

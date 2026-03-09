@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
 
-// signup function ************************************************
+// 1. REGISTER FUNCTION ************************************************
 export const register = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, password, role } = req.body;
@@ -19,7 +19,7 @@ export const register = async (req, res) => {
     const userCheck = await User.findOne({ email });
     if (userCheck) {
       return res.status(400).json({
-        message: "User already exists",
+        message: "User already exists with this email",
         success: false,
       });
     }
@@ -51,7 +51,7 @@ export const register = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Register Error:", error);
     return res.status(500).json({
       message: "Internal server error",
       success: false,
@@ -59,16 +59,18 @@ export const register = async (req, res) => {
   }
 };
 
-// login function ****************************************************
+// 2. LOGIN FUNCTION ****************************************************
 export const login = async (req, res) => {
   try {
     const { email, password, role } = req.body;
+
     if (!email || !password || !role) {
       return res.status(400).json({
         message: "All fields are required",
         success: false,
       });
     }
+
     let user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({
@@ -76,6 +78,7 @@ export const login = async (req, res) => {
         success: false,
       });
     }
+
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch) {
       return res.status(400).json({
@@ -96,7 +99,7 @@ export const login = async (req, res) => {
       expiresIn: "1d",
     });
 
-    user = {
+    const userResponse = {
       _id: user._id,
       fullname: user.fullname,
       email: user.email,
@@ -105,20 +108,23 @@ export const login = async (req, res) => {
       profile: user.profile,
     };
 
+    // ✅ FIX: Cross-origin (Render/Vercel) ke liye cookie options update kiye hain
     return res
       .status(200)
       .cookie("token", token, {
         maxAge: 1 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite: "strict",
+        sameSite: "none", // Required for cross-site requests
+        secure: true, // Required for SameSite=None
       })
       .json({
-        message: `Welcome back ${user.fullname}`,
-        user,
+        message: `Welcome back ${userResponse.fullname}`,
+        user: userResponse,
+        token, // ✅ FIX: Frontend (localStorage) ke liye token JSON mein bhej rahe hain
         success: true,
       });
   } catch (error) {
-    console.log(error);
+    console.error("Login Error:", error);
     return res.status(500).json({
       message: "Internal server error",
       success: false,
@@ -126,15 +132,23 @@ export const login = async (req, res) => {
   }
 };
 
-// Logout function *******************************************
+// 3. LOGOUT FUNCTION *******************************************
 export const logout = async (req, res) => {
   try {
-    return res.status(200).cookie("token", "", { maxAge: 0 }).json({
-      message: "Logged out successfully",
-      success: true,
-    });
+    return res
+      .status(200)
+      .cookie("token", "", {
+        maxAge: 0,
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+      })
+      .json({
+        message: "Logged out successfully",
+        success: true,
+      });
   } catch (error) {
-    console.log(error);
+    console.error("Logout Error:", error);
     return res.status(500).json({
       message: "Internal server error",
       success: false,
@@ -142,18 +156,13 @@ export const logout = async (req, res) => {
   }
 };
 
-// update profile *************************************************
+// 4. UPDATE PROFILE *************************************************
 export const updateProfile = async (req, res) => {
   try {
     const { fullname, email, phoneNumber, bio, skills } = req.body;
     const file = req.file;
 
-    let skillsArray;
-    if (skills) {
-      skillsArray = skills.split(",");
-    }
-
-    const userId = req.id;
+    const userId = req.id; // From isAuthenticated middleware
     let user = await User.findById(userId);
 
     if (!user) {
@@ -163,29 +172,30 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    // updating data
+    // Updating basic data
     if (fullname) user.fullname = fullname;
     if (email) user.email = email;
     if (phoneNumber) user.phoneNumber = phoneNumber;
     if (bio) user.profile.bio = bio;
-    if (skills) user.profile.skills = skillsArray;
 
-    // 👇 FILE UPLOAD LOGIC 👇
+    if (skills) {
+      user.profile.skills = skills.split(",");
+    }
+
+    // File upload (PDF Resume or Profile Photo)
     if (file) {
       const isPdf = file.mimetype === "application/pdf";
       let cloudResponse;
 
       if (isPdf) {
-        // ✅ FIXED: Using 'auto' and adding access_mode
+        // PDF processing
         cloudResponse = await new Promise((resolve, reject) => {
           const uploadStream = cloudinary.uploader.upload_stream(
             {
               resource_type: "auto",
               folder: "resumes",
               format: "pdf",
-              // Access mode ko public force karna zaroori hai
-              access_mode: "public",
-              public_id: file.originalname.split(".")[0],
+              public_id: `${Date.now()}-${file.originalname.split(".")[0]}`,
             },
             (error, result) => {
               if (error) reject(error);
@@ -194,20 +204,19 @@ export const updateProfile = async (req, res) => {
           );
           uploadStream.end(file.buffer);
         });
+        user.profile.resume = cloudResponse.secure_url;
+        user.profile.resumeOriginalName = file.originalname;
       } else {
+        // Image processing
         const fileUri = getDataUri(file);
         cloudResponse = await cloudinary.uploader.upload(fileUri.content);
+        user.profile.profilePhoto = cloudResponse.secure_url;
       }
-
-      console.log("Uploaded URL:", cloudResponse.secure_url);
-
-      user.profile.resume = cloudResponse.secure_url;
-      user.profile.resumeOriginalName = file.originalname;
     }
 
     await user.save();
 
-    user = {
+    const updatedUser = {
       _id: user._id,
       fullname: user.fullname,
       email: user.email,
@@ -218,11 +227,11 @@ export const updateProfile = async (req, res) => {
 
     return res.status(200).json({
       message: "Profile updated successfully",
-      user,
+      user: updatedUser,
       success: true,
     });
   } catch (error) {
-    console.log("error: ", error);
+    console.error("UpdateProfile Error:", error);
     return res.status(500).json({
       message: "Internal server error",
       success: false,

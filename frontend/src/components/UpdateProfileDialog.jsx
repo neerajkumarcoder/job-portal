@@ -77,7 +77,7 @@ function UpdateProfileDialog({ open, setOpen }) {
     <div>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent
-          className="sm:max-w-[425px]"
+          className="sm:max-w-106.25"
           onInteractOutside={() => setOpen(false)}
         >
           <DialogHeader>

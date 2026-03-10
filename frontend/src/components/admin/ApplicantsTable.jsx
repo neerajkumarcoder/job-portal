@@ -35,33 +35,33 @@ function ApplicantsTable() {
   };
 
   return (
-    <div>
-      <Table>
-        <TableCaption> A list of your applied user</TableCaption>
+    <div className="overflow-x-auto w-full">
+      <Table className="min-w-150 md:min-w-full text-xs sm:text-sm md:text-base">
+        <TableCaption className="text-xs md:text-sm"> A list of your applied user</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead>FullName</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Contact</TableHead>
-            <TableHead>Resume</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead className="text-right">Action</TableHead>
+            <TableHead className="min-w-30">FullName</TableHead>
+            <TableHead className="min-w-37.5">Email</TableHead>
+            <TableHead className="min-w-22.5">Contact</TableHead>
+            <TableHead className="min-w-22.5">Resume</TableHead>
+            <TableHead className="min-w-20">Date</TableHead>
+            <TableHead className="text-right min-w-20">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {applicants &&
             applicants?.applications?.map((item) => (
-              <tr key={item._id}>
-                <TableCell>{item?.applicant?.fullname}</TableCell>
-                <TableCell>{item?.applicant?.email}</TableCell>
-                <TableCell>{item?.applicant?.phoneNumber}</TableCell>
-                <TableCell>
+              <tr key={item._id} className="border-b last:border-none hover:bg-gray-50 transition md:hover:bg-gray-100">
+                <TableCell className="whitespace-nowrap">{item?.applicant?.fullname}</TableCell>
+                <TableCell className="whitespace-nowrap">{item?.applicant?.email}</TableCell>
+                <TableCell className="whitespace-nowrap">{item?.applicant?.phoneNumber}</TableCell>
+                <TableCell className="whitespace-nowrap">
                   {item?.applicant?.profile?.resume ? (
                     <a
                       href={item?.applicant?.profile?.resume}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 cursor-pointer"
+                      className="text-blue-600 cursor-pointer underline"
                     >
                       {item?.applicant?.profile?.resumeOriginalName}
                     </a>
@@ -69,7 +69,7 @@ function ApplicantsTable() {
                     <span>NA</span>
                   )}
                 </TableCell>
-                <TableCell>{item?.applicant.createdAt.split("T")[0]}</TableCell>
+                <TableCell className="whitespace-nowrap">{item?.applicant.createdAt.split("T")[0]}</TableCell>
                 <TableCell className="float-right cursor-pointer">
                   <Popover>
                     <PopoverTrigger>
@@ -94,6 +94,28 @@ function ApplicantsTable() {
             ))}
         </TableBody>
       </Table>
+      <style jsx="true">{`
+        @media (max-width: 768px) {
+          /* Scroll table horizontally, reduce font size */
+          .min-w-\[600px\] {
+            min-width: 600px !important;
+          }
+          .text-xs {
+            font-size: 0.75rem !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .text-xs {
+            font-size: 0.7rem !important;
+          }
+          .min-w-\[90px\], .min-w-\[80px\], .min-w-\[120px\], .min-w-\[150px\] {
+            min-width: 70px !important;
+          }
+          .min-w-\[600px\] {
+            min-width: 400px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }

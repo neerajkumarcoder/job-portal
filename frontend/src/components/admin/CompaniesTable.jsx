@@ -39,14 +39,18 @@ function CompaniesTable() {
   }, [companies, searchCompanyByText]);
 
   return (
-    <div>
-      <Table>
-        <TableCaption>A list of your recent registered companies</TableCaption>
+    <div className="w-full overflow-x-auto">
+      <Table className="min-w-150 md:min-w-full text-sm md:text-base">
+        <TableCaption>
+          <span className="block text-xs md:text-sm">
+            A list of your recent registered companies
+          </span>
+        </TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead>Logo</TableHead>
+            <TableHead className="w-15 md:w-18">Logo</TableHead>
             <TableHead>Name</TableHead>
-            <TableHead>Date</TableHead>
+            <TableHead className="hidden xs:table-cell">Date</TableHead>
             <TableHead className="text-right">Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -59,9 +63,12 @@ function CompaniesTable() {
             </TableRow>
           ) : (
             filterCompany.map((company) => (
-              <TableRow key={company._id}>
+              <TableRow
+                key={company._id}
+                className="hover:bg-muted transition-colors"
+              >
                 <TableCell>
-                  <Avatar>
+                  <Avatar className="h-8 w-8 md:h-10 md:w-10">
                     <AvatarImage
                       src={
                         company.logo ||
@@ -71,8 +78,13 @@ function CompaniesTable() {
                     />
                   </Avatar>
                 </TableCell>
-                <TableCell>{company.name}</TableCell>
                 <TableCell>
+                  <span className="block font-medium truncate max-w-30 md:max-w-50">{company.name}</span>
+                  <span className="block text-xs text-muted-foreground md:hidden">
+                    {company.createdAt ? company.createdAt.split("T")[0] : "-"}
+                  </span>
+                </TableCell>
+                <TableCell className="hidden xs:table-cell">
                   {company.createdAt ? company.createdAt.split("T")[0] : "-"}
                 </TableCell>
                 <TableCell className="text-right cursor-pointer">
@@ -81,7 +93,10 @@ function CompaniesTable() {
                       <MoreHorizontal />
                     </PopoverTrigger>
                     <PopoverContent className="w-32">
-                      <div onClick={()=>navigate(`/admin/companies/${company._id}`)} className="flex items-center gap-2 w-fit cursor-pointer">
+                      <div
+                        onClick={() => navigate(`/admin/companies/${company._id}`)}
+                        className="flex items-center gap-2 w-fit cursor-pointer"
+                      >
                         <Edit2 className="w-4" />
                         <span>Edit</span>
                       </div>

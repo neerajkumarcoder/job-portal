@@ -79,12 +79,12 @@ function PostJob() {
   return (
     <div>
       <Navbar />
-      <div className="flex items-center justify-center w-screen my-5 px-4">
+      <div className="flex items-center justify-center w-full my-5 px-2 sm:px-4">
         <form
           onSubmit={submitHandler}
-          className="p-8 max-w-4xl w-full border border-gray-300 shadow-lg rounded-md"
+          className="p-3 sm:p-6 md:p-8 max-w-full sm:max-w-2xl md:max-w-3xl lg:max-w-4xl w-full border border-gray-300 shadow-lg rounded-md bg-white"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <Label>Title</Label>
               <Input
@@ -167,7 +167,7 @@ function PostJob() {
               />
             </div>
             {companies.length > 0 && (
-              <div className="md:col-span-2">
+              <div className="sm:col-span-2">
                 <Label>Select Company</Label>
                 <Select onValueChange={selectChangeHandler}>
                   <SelectTrigger className="w-full mt-1">
@@ -207,6 +207,15 @@ function PostJob() {
           )}
         </form>
       </div>
+      <style>
+        {`
+        @media (max-width: 640px) {
+          form > div.grid > div, form > div.grid > div.sm\\:col-span-2 {
+            grid-column: span 1 / span 1 !important;
+          }
+        }
+        `}
+      </style>
     </div>
   );
 }

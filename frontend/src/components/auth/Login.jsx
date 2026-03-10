@@ -76,12 +76,19 @@ function Login() {
   return (
     <div>
       <Navbar />
-      <div className="flex items-center justify-center max-w-7xl mx-auto">
+      <div className="flex items-center justify-center max-w-7xl mx-auto px-2 sm:px-4">
         <form
           onSubmit={submitHandler}
-          className="w-1/2 border border-gray-200 rounded-md p-4 my-10 shadow-sm"
+          className="
+            w-full
+            sm:w-3/4
+            md:w-2/3
+            lg:w-1/2
+            border border-gray-200 rounded-md p-4 my-10 shadow-sm
+            bg-white
+            "
         >
-          <h1 className="font-bold text-xl mb-5">Login</h1>
+          <h1 className="font-bold text-xl mb-5 text-center">Login</h1>
 
           <div className="my-2">
             <Label>Email</Label>
@@ -105,8 +112,8 @@ function Login() {
             />
           </div>
 
-          <div className="flex items-center justify-between">
-            <RadioGroup className="flex items-center gap-4 my-5">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <RadioGroup className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 my-5">
               <div className="flex items-center gap-2">
                 <Input
                   type="radio"
@@ -142,7 +149,7 @@ function Login() {
             </Button>
           )}
 
-          <span className="text-sm">
+          <span className="text-sm block text-center">
             Don't have an account?{" "}
             <Link to="/signup" className="text-blue-600 hover:underline">
               Signup

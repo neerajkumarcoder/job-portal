@@ -23,14 +23,17 @@ function AdminJobs() {
   return (
     <div>
       <Navbar />
-      <div className="max-w-6xl mx-auto my-10">
-        <div className="flex items-center justify-between my-5">
+      <div className="max-w-6xl mx-auto my-10 px-2 sm:px-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between my-5 gap-3 sm:gap-0">
           <Input
-            className="w-fit"
+            className="w-full sm:w-fit"
             placeholder="Filter by name"
             onChange={(e) => setInput(e.target.value)}
           />
-          <Button onClick={() => navigate("/admin/jobs/create")}>
+          <Button
+            className="w-full sm:w-auto"
+            onClick={() => navigate("/admin/jobs/create")}
+          >
             New Jobs
           </Button>
         </div>

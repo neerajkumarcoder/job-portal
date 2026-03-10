@@ -15,41 +15,45 @@ function Profile() {
   const [open, setOpen] = useState(false);
   const { user } = useSelector((store) => store.auth);
   const isResume = user?.profile?.resume && user?.profile?.resume.trim() !== "";
+
   return (
     <div>
       <Navbar />
-      <div className="max-w-4xl mx-auto bg-white border border-gray-200 rounded-2xl my-5 p-8">
-        <div className="flex justify-between">
-          <div className="flex items-center gap-4">
-            <Avatar className="h-24 w-24">
+      <div className="max-w-4xl mx-auto bg-white border border-gray-200 rounded-2xl my-5 p-4 sm:p-6 md:p-8">
+        <div className="flex flex-col md:flex-row md:justify-between gap-4 md:gap-0">
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <Avatar className="h-20 w-20 sm:h-24 sm:w-24">
               <AvatarImage src="https://img.freepik.com/premium-vector/creative-elegant-abstract-minimalistic-logo-design-vector-any-brand-company_1287271-18452.jpg?semt=ais_hybrid&w=740&q=80" />
             </Avatar>
-            <div>
-              <h1 className="font-medium text-xl">{user?.fullname}</h1>
-              <p>{user?.profile?.bio}</p>
+            <div className="text-center sm:text-left mt-2 sm:mt-0">
+              <h1 className="font-medium text-lg sm:text-xl wrap-break-word">{user?.fullname}</h1>
+              <p className="wrap-break-word">{user?.profile?.bio}</p>
             </div>
           </div>
-          <Button
-            onClick={() => setOpen(true)}
-            className="text-right"
-            variant="outline"
-          >
-            <Pen />
-          </Button>
+          <div className="self-center mt-3 md:mt-0">
+            <Button
+              onClick={() => setOpen(true)}
+              className="text-right"
+              variant="outline"
+              size="icon"
+            >
+              <Pen />
+            </Button>
+          </div>
         </div>
         <div className="my-5">
-          <div className="flex items-center gap-3 my-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 my-2">
             <Mail />
-            <span>{user?.email}</span>
+            <span className="wrap-break-word">{user?.email}</span>
           </div>
-          <div className="flex items-center gap-3 my-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 my-2">
             <Contact />
-            <span>{user?.phoneNumber}</span>
+            <span className="wrap-break-word">{user?.phoneNumber}</span>
           </div>
         </div>
         <div className="my-5">
           <h1 className="font-bold mb-2">Skills</h1>
-          <div className="flex items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1">
             {user?.profile?.skills.length != 0 ? (
               user?.profile?.skills.map((item, index) => (
                 <Badge variant="outline" key={index}>
@@ -61,14 +65,14 @@ function Profile() {
             )}
           </div>
         </div>
-        <div className="grid w-full max-w-sm items-center gap-1.5">
+        <div className="grid w-full max-w-full sm:max-w-sm items-center gap-1.5">
           <Label className="text-md font-bold">Resume</Label>
           {isResume ? (
             <a
               target="_blank"
               rel="noopener noreferrer"
               href={user?.profile?.resume}
-              className="text-blue-500 w-full hover:underline cursor-pointer"
+              className="text-blue-500 w-full hover:underline cursor-pointer break-all"
               download={user?.profile?.resumeOriginalName}
             >
               {user?.profile?.resumeOriginalName || "View Resume"}
@@ -78,10 +82,12 @@ function Profile() {
           )}
         </div>
       </div>
-      <div className="max-w-4xl mx-auto bg-white rounded-full">
-        <h1 className="text-lg font-bold my-5">Applied Jobs</h1>
+      <div className="max-w-4xl mx-auto bg-white rounded-2xl md:rounded-full mt-2">
+        <h1 className="text-lg font-bold my-5 text-center md:text-left">Applied Jobs</h1>
         {/* Application Table  */}
-        <AppliedJobTable />
+        <div className="overflow-x-auto">
+          <AppliedJobTable />
+        </div>
       </div>
       <UpdateProfileDialog open={open} setOpen={setOpen} />
     </div>

@@ -44,7 +44,6 @@ function Signup() {
     }
     try {
       dispatch(setLoading(true));
-
       // FIX: Content-Type header hata diya hai taki browser khud boundary set kare
       const res = await axios.post(`${USER_API_END_POINT}/register`, formData, {
         headers: {
@@ -72,12 +71,13 @@ function Signup() {
   return (
     <div>
       <Navbar />
-      <div className="flex items-center justify-center max-w-7xl mx-auto">
+      {/* Responsive container: px-2 for mobile, px-8 for md+ */}
+      <div className="flex items-center justify-center max-w-7xl mx-auto px-2 md:px-8">
         <form
           onSubmit={submitHandler}
-          className="w-1/2 border border-gray-200 rounded-md p-4 my-10"
+          className="w-full sm:w-4/5 md:w-2/3 lg:w-1/2 border border-gray-200 rounded-md p-4 md:p-6 my-6 sm:my-8 md:my-10 bg-white"
         >
-          <h1 className="font-bold text-xl mb-5">Sign up</h1>
+          <h1 className="font-bold text-xl md:text-2xl mb-5 text-center md:text-left">Sign up</h1>
           <div className="my-2">
             <Label>Full Name</Label>
             <Input
@@ -118,33 +118,34 @@ function Signup() {
               onChange={changeEventHandler}
             ></Input>
           </div>
-          <div className="flex items-center justify-between">
-            <RadioGroup className="flex items-center gap-4 my-5">
-              <div className="flex items-center gap-3">
-                <Input
-                  type="radio"
-                  name="role"
-                  value="student"
-                  checked={input.role === "student"}
-                  onChange={changeEventHandler}
-                  className="cursor-pointer"
-                />
-                <Label htmlFor="r1">Student</Label>
-              </div>
-              <div className="flex items-center gap-3">
-                <Input
-                  type="radio"
-                  name="role"
-                  value="recruiter"
-                  checked={input.role === "recruiter"}
-                  onChange={changeEventHandler}
-                  className="cursor-pointer"
-                />
-                <Label htmlFor="r2">Recruiter</Label>
-              </div>
-            </RadioGroup>
-            <div className="flex items-center gap-2">
-              <Label>Profile</Label>
+          {/* Responsively stack on mobile, flex-row for md+ */}
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <RadioGroup className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 my-5">
+                          <div className="flex items-center gap-2">
+                            <Input
+                              type="radio"
+                              name="role"
+                              value="student"
+                              checked={input.role === "student"}
+                              onChange={changeEventHandler}
+                              className="cursor-pointer w-4 h-4"
+                            />
+                            <Label className="cursor-pointer">Student</Label>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Input
+                              type="radio"
+                              name="role"
+                              value="recruiter"
+                              checked={input.role === "recruiter"}
+                              onChange={changeEventHandler}
+                              className="cursor-pointer w-4 h-4"
+                            />
+                            <Label className="cursor-pointer">Recruiter</Label>
+                          </div>
+                        </RadioGroup>
+            <div className="flex items-center gap-2 mt-2 md:mt-0">
+              <Label>Add Profile Photo</Label>
               <Input
                 accept="image/*"
                 type="file"
@@ -155,16 +156,14 @@ function Signup() {
           </div>
           {loading ? (
             <Button className="w-full my-4">
-              {" "}
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait{" "}
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
             </Button>
           ) : (
             <Button type="submit" className="w-full my-4">
               Signup
             </Button>
           )}
-
-          <span className="text-sm">
+          <span className="text-sm block text-center">
             Already have an account?{" "}
             <Link to="/login" className="text-blue-600">
               Login

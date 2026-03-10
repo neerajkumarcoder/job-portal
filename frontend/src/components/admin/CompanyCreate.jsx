@@ -77,36 +77,39 @@ function CompanyCreate() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen bg-white">
       <Navbar />
-      <div className="max-w-4xl mx-auto px-4">
-        <div className="my-10">
-          <h1 className="font-bold text-2xl">Your Company Name</h1>
-          <p className="text-gray-500">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8">
+        <div className="my-8 md:my-10">
+          <h1 className="font-bold text-xl sm:text-2xl md:text-3xl">Your Company Name</h1>
+          <p className="text-gray-500 text-base sm:text-lg">
             What would you like to give your company name? You can change this
             later.
           </p>
         </div>
 
-        <div className="space-y-4">
-          <Label>Company Name</Label>
+        <div className="space-y-2 sm:space-y-4">
+          <Label className="text-sm sm:text-base">Company Name</Label>
           <Input
             type="text"
-            className="my-2"
+            className="my-2 w-full max-w-md"
             placeholder="Google, Microsoft, etc."
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
           />
         </div>
 
-        <div className="flex items-center gap-2 my-10">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 my-8 md:my-10 max-w-md">
           <Button
             variant="outline"
+            className="w-full sm:w-auto"
             onClick={() => navigate("/admin/companies")}
           >
             Cancel
           </Button>
-          <Button onClick={registerNewCompany}>Continue</Button>
+          <Button className="w-full sm:w-auto" onClick={registerNewCompany}>
+            Continue
+          </Button>
         </div>
       </div>
     </div>

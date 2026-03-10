@@ -17,10 +17,10 @@ const filterData = [
       "Java Developer",
     ],
   },
-  {
-    filterType: "Salary",
-    array: ["0-40k", "42-1lakh", "11lakh to 51lakh"],
-  },
+  // {
+  //   filterType: "Salary",
+  //   array: ["0-40k", "42-1lakh", "11lakh to 51lakh"],
+  // },
 ];
 
 function FilterCard() {
@@ -33,19 +33,32 @@ function FilterCard() {
     dispatch(setSearchedQuery(selectedValue));
   }, [selectedValue]);
   return (
-    <div className="w-full bg-white p-3 rounded-md">
-      <h1 className="font-bold text-lg">Filter Jobs</h1>
+    <div className="w-full bg-white p-3 rounded-md 
+        sm:p-4 sm:rounded-lg 
+        md:max-w-md md:mx-auto md:p-6
+        ">
+      <h1 className="font-bold text-lg sm:text-xl md:text-2xl">Filter Jobs</h1>
       <hr className="mt-3 mb-2" />
       <RadioGroup value={selectedValue} onValueChange={changeHandler}>
         {filterData.map((data, index) => (
-          <div>
-            <h1 className="font-bold text-lg">{data.filterType}</h1>
+          <div key={data.filterType} className="mb-4 sm:mb-6">
+            <h1 className="font-bold text-lg sm:text-xl">{data.filterType}</h1>
             {data.array.map((item, idx) => {
               const itemId = `id${index}-${idx}`;
               return (
-                <div className="flex items-center space-x-2 my-2">
+                <div 
+                  className="flex items-center space-x-2 my-2 
+                  sm:my-3
+                  " 
+                  key={itemId}
+                >
                   <RadioGroupItem value={item} id={itemId} />
-                  <Label htmlFor={itemId}>{item}</Label>
+                  <Label 
+                    htmlFor={itemId}
+                    className="text-base sm:text-lg"
+                  >
+                    {item}
+                  </Label>
                 </div>
               );
             })}

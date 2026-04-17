@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+
 const applicationSlice = createSlice({
   name: "application",
   initialState: {
@@ -8,7 +9,16 @@ const applicationSlice = createSlice({
     setAllApplicants: (state, action) => {
       state.applicants = action.payload;
     },
+    // 👇 NAYA REDUCER: Logout par applicants ka data hatane ke liye
+    clearApplicationState: (state) => {
+      state.applicants = [];
+    },
   },
 });
-export const {setAllApplicants} =  applicationSlice.actions;
+
+export const {
+  setAllApplicants,
+  clearApplicationState, // 👇 Ise export karna mat bhoolna
+} = applicationSlice.actions;
+
 export default applicationSlice.reducer;

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Navbar from "../shared/Navbar";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
@@ -8,22 +8,12 @@ import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { setSingleCompany } from "../../redux/companySlice";
 import axios from "axios";
-import { COMPANY_API_END_POINT } from "../../utils/constent"; // Check spelling: constant vs constent
+import { COMPANY_API_END_POINT } from "../../utils/constent";
 
 function CompanyCreate() {
   const navigate = useNavigate();
   const [companyName, setCompanyName] = useState("");
   const dispatch = useDispatch();
-
-  //  Page load par check karega ki token hai ya nahi
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      console.log(" Token not found in LocalStorage!");
-    } else {
-      console.log("Token detected successfully.");
-    }
-  }, []);
 
   const registerNewCompany = async () => {
     if (!companyName.trim()) {
@@ -32,27 +22,15 @@ function CompanyCreate() {
     }
 
     try {
-      // 1. LocalStorage se token nikalna
-      const token = localStorage.getItem("token");
-
-      //  DEBUG LOG: Isse humein confirmation milegi
-      console.log("Request bhej rahe hain is token ke sath:", token);
-
-      if (!token) {
-        toast.error("Session missing. Please login again.");
-        navigate("/login");
-        return;
-      }
-
       const res = await axios.post(
         `${COMPANY_API_END_POINT}/register`,
         { companyName },
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            // Yahan se Authorization header hata diya hai kyunki token ab cookie se jayega
           },
-          withCredentials: true,
+          withCredentials: true, // Ye automatically browser se token (cookie) bhej dega
         },
       );
 
@@ -64,15 +42,7 @@ function CompanyCreate() {
       }
     } catch (error) {
       console.log("API Error Details:", error.response);
-
-      // 2. 401 Error Handling
-      if (error.response?.status === 401) {
-        toast.error("Your session is invalid or expired. Please login again.");
-        localStorage.removeItem("token"); // Purana invalid token hata do
-        navigate("/login");
-      } else {
-        toast.error(error.response?.data?.message || "Internal server error");
-      }
+      toast.error(error.response?.data?.message || "Something went wrong.");
     }
   };
 
@@ -81,7 +51,9 @@ function CompanyCreate() {
       <Navbar />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8">
         <div className="my-8 md:my-10">
-          <h1 className="font-bold text-xl sm:text-2xl md:text-3xl">Your Company Name</h1>
+          <h1 className="font-bold text-xl sm:text-2xl md:text-3xl">
+            Your Company Name
+          </h1>
           <p className="text-gray-500 text-base sm:text-lg">
             What would you like to give your company name? You can change this
             later.

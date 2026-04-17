@@ -8,7 +8,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { USER_API_END_POINT } from "../../utils/constent";
+
+// 👇 Sahi actions import kiye hain
 import { setUser } from "../../redux/authSlice";
+import { clearAllJobState } from "../../redux/jobSlice";
+import { clearApplicationState } from "../../redux/applicationSlice";
 
 function Navbar() {
   const { user } = useSelector((store) => store.auth);
@@ -17,13 +21,21 @@ function Navbar() {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // 👇 Updated Logout Handler
   const logoutHandler = async () => {
     try {
       const res = await axios.get(`${USER_API_END_POINT}/logout`, {
         withCredentials: true,
       });
       if (res.data.success) {
+        // 1. User ki details delete karein
         dispatch(setUser(null));
+
+        // 2. Jobs aur Applications ka data bhi memory se delete karein (Ye aapka issue solve karega)
+        dispatch(clearAllJobState());
+        dispatch(clearApplicationState());
+
         navigate("/");
         toast.success(res.data.message);
       }
@@ -105,7 +117,6 @@ function Navbar() {
               <PopoverTrigger asChild>
                 <Avatar className="cursor-pointer">
                   <AvatarImage
-                    // src="https://github.com/shadcn.png"
                     src={user?.profile?.profilePhoto}
                     alt="@shadcn"
                   />
@@ -115,7 +126,6 @@ function Navbar() {
                 <div className="flex gap-4 items-center space-y-0">
                   <Avatar className="cursor-pointer">
                     <AvatarImage
-                      // src="https://github.com/shadcn.png"
                       src={user?.profile?.profilePhoto}
                       alt="@shadcn"
                     />
@@ -165,7 +175,12 @@ function Navbar() {
                   viewBox="0 0 24 24"
                   stroke="currentColor"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
               <ul className="flex flex-col gap-4 font-medium mb-6">
@@ -174,7 +189,9 @@ function Navbar() {
               {!user ? (
                 <div className="flex flex-col gap-2">
                   <Link to="/login" onClick={() => setMenuOpen(false)}>
-                    <Button className="w-full" variant="outline">Login</Button>
+                    <Button className="w-full" variant="outline">
+                      Login
+                    </Button>
                   </Link>
                   <Link to="/signup" onClick={() => setMenuOpen(false)}>
                     <Button className="w-full bg-[#6A38C2] hover:bg-[#5224a1]">
@@ -186,11 +203,16 @@ function Navbar() {
                 <div className="mt-auto">
                   <div className="flex items-center gap-3 mb-4">
                     <Avatar>
-                      <AvatarImage src={user?.profile?.profilePhoto} alt="@shadcn" />
+                      <AvatarImage
+                        src={user?.profile?.profilePhoto}
+                        alt="@shadcn"
+                      />
                     </Avatar>
                     <div>
                       <h4 className="font-medium">{user?.fullname}</h4>
-                      <p className="text-xs text-gray-500">{user?.profile?.bio}</p>
+                      <p className="text-xs text-gray-500">
+                        {user?.profile?.bio}
+                      </p>
                     </div>
                   </div>
                   <div className="flex flex-col text-gray-600 gap-3">

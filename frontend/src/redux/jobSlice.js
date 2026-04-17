@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+
 const jobSlice = createSlice({
   name: "job",
   initialState: {
@@ -29,8 +30,16 @@ const jobSlice = createSlice({
     setSearchedQuery: (state, action) => {
       state.searchedQuery = action.payload;
     },
+    // 👇 NAYA REDUCER: Logout par jobs ka data hatane ke liye
+    clearAllJobState: (state) => {
+      state.allAppliedJobs = []; // Ye sabse main hai!
+      state.allJobs = [];
+      state.allAdminJobs = [];
+      state.singleJob = null;
+    },
   },
 });
+
 export const {
   setAllJobs,
   setSingleJob,
@@ -38,5 +47,7 @@ export const {
   setSearchJobByText,
   setAllAppliedJobs,
   setSearchedQuery,
+  clearAllJobState, // 👇 Ise export karna mat bhoolna
 } = jobSlice.actions;
+
 export default jobSlice.reducer;

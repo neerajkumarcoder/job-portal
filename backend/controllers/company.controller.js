@@ -60,12 +60,16 @@ export const getCompany = async (req, res) => {
     }
 
     const companies = await Company.find({ userId });
+
+    // 👇 FIX: Agar companies nahi hain, toh 404 (error) mat bhejo.
+    // 200 OK ke sath ek empty array bhejo taaki frontend Redux state update kar sake!
     if (!companies || companies.length === 0) {
-      return res.status(404).json({
-        message: "No companies found for this user",
-        success: false,
+      return res.status(200).json({
+        companies: [],
+        success: true, // Isko true rakhna zaroori tha
       });
     }
+
     return res.status(200).json({
       companies,
       success: true,

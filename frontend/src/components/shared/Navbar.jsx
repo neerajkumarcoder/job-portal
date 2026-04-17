@@ -9,10 +9,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { USER_API_END_POINT } from "../../utils/constent";
 
-// 👇 Sahi actions import kiye hain
+// 👇 Saare clear actions import kiye hain
 import { setUser } from "../../redux/authSlice";
 import { clearAllJobState } from "../../redux/jobSlice";
 import { clearApplicationState } from "../../redux/applicationSlice";
+// 👇 Ye naya import hai Recruiter wali problem solve karne ke liye
+import { clearCompanyState } from "../../redux/companySlice";
 
 function Navbar() {
   const { user } = useSelector((store) => store.auth);
@@ -32,9 +34,11 @@ function Navbar() {
         // 1. User ki details delete karein
         dispatch(setUser(null));
 
-        // 2. Jobs aur Applications ka data bhi memory se delete karein (Ye aapka issue solve karega)
+        // 2. Jobs, Applications, aur Companies ka data bhi memory se delete karein
+        // (Ye "State Leak" issue solve karega)
         dispatch(clearAllJobState());
         dispatch(clearApplicationState());
+        dispatch(clearCompanyState()); // 👇 Ye naya call add kiya hai
 
         navigate("/");
         toast.success(res.data.message);

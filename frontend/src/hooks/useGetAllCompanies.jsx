@@ -9,14 +9,16 @@ function useGetAllCompanies() {
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        // Sirf ek clean API call!
         const res = await API.get("/company/get");
 
         if (res.data.success) {
+          // Agar sab sahi hai, toh backend ka data set karo (ya khali array)
           dispatch(setCompanies(res.data.companies));
         }
       } catch (error) {
         console.log("Error in useGetAllCompanies:", error);
+        // 👇 SAFETY NET: Agar API fail ho jaye, toh screen par purana kachra na dikhe
+        dispatch(setCompanies([]));
       }
     };
     fetchCompanies();

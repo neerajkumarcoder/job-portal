@@ -17,15 +17,16 @@ const app = express();
 app.set("trust proxy", 1);
 
 //middleware
+app.use(cors({ origin: true, credentials: true }));   // new add 27 april  
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-const corsOptions = {
-  origin: ["http://localhost:5173", "https://job-portal-two-mu-86.vercel.app"],
-  credentials: true,
-};
-app.use(cors(corsOptions));
+// const corsOptions = { 
+//   origin: ["http://localhost:5173", "https://job-portal-two-mu-86.vercel.app"],
+//   credentials: true,
+// };
+// app.use(cors(corsOptions));
 
 const PORT = process.env.PORT || 8000;
 
